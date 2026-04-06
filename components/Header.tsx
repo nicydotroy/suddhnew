@@ -1,39 +1,89 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { siteConfig } from '@/lib/seo';
+import { useState } from 'react';
 
 export default function Header() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
-    <header className="border-b border-gray-200 bg-white">
-      <nav className="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50 bg-white backdrop-blur-md border-b border-gray-100 shadow-sm">
+      <nav className="container mx-auto px-4 py-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80">
-            <Image
-              src="/image/logo.png"
-              alt={siteConfig.name}
-              width={40}
-              height={40}
-              className="h-10 w-auto"
-            />
-            <span className="text-xl font-bold text-blue-600 hidden sm:inline">
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="relative">
+              <Image
+                src="/image/logo.png"
+                alt={siteConfig.name}
+                width={45}
+                height={45}
+                className="h-11 w-auto group-hover:scale-110 transition-transform"
+              />
+            </div>
+            <span className="text-xl font-bold bg-gradient-to-r from-orange-500 to-red-600 bg-clip-text text-transparent hidden sm:inline">
               {siteConfig.name}
             </span>
           </Link>
 
-          {/* Navigation Links */}
-          <div className="flex gap-8">
-            <Link href="/" className="text-gray-600 hover:text-blue-600">
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex gap-8 items-center">
+            <Link href="/" className="text-gray-600 hover:text-orange-600 font-medium transition-colors">
               Home
             </Link>
-            <a href="#about" className="text-gray-600 hover:text-blue-600">
+            <a href="#categories" className="text-gray-600 hover:text-orange-600 font-medium transition-colors">
+              Categories
+            </a>
+            <a href="#about" className="text-gray-600 hover:text-orange-600 font-medium transition-colors">
               About
             </a>
-            <a href="#contact" className="text-gray-600 hover:text-blue-600">
+            <a href="#contact" className="text-gray-600 hover:text-orange-600 font-medium transition-colors">
               Contact
             </a>
+            <Link 
+              href="/admin"
+              className="px-4 py-2 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-lg hover:shadow-lg transition-all font-medium"
+            >
+              New Article
+            </Link>
           </div>
+
+          {/* Mobile menu button */}
+          <button 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
         </div>
+
+        {/* Mobile Navigation */}
+        {mobileMenuOpen && (
+          <div className="md:hidden mt-4 pb-4 space-y-3 border-t border-gray-100 pt-4">
+            <Link href="/" className="block text-gray-600 hover:text-orange-600 font-medium">
+              Home
+            </Link>
+            <a href="#categories" className="block text-gray-600 hover:text-orange-600 font-medium">
+              Categories
+            </a>
+            <a href="#about" className="block text-gray-600 hover:text-orange-600 font-medium">
+              About
+            </a>
+            <a href="#contact" className="block text-gray-600 hover:text-orange-600 font-medium">
+              Contact
+            </a>
+            <Link 
+              href="/admin"
+              className="block px-4 py-2 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-lg text-center font-medium"
+            >
+              New Article
+            </Link>
+          </div>
+        )}
       </nav>
     </header>
   );
