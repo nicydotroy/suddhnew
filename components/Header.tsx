@@ -18,9 +18,9 @@ export default function Header() {
               <Image
                 src="/image/logo.png"
                 alt={siteConfig.name}
-                width={50}
-                height={50}
-                className="h-12 w-auto group-hover:scale-110 transition-transform"
+                width={100}
+                height={100}
+                className="h-16 sm:h-20 md:h-24 w-auto group-hover:scale-110 transition-transform"
               />
             </div>
           </Link>

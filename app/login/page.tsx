@@ -45,9 +45,9 @@ export default function LoginPage() {
           <Image
             src="/image/logo.png"
             alt="Suddh News"
-            width={120}
-            height={120}
-            className="h-32 w-auto"
+            width={200}
+            height={200}
+            className="h-40 w-auto"
           />
         </Link>
 
