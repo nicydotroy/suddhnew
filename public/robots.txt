@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://suddhnnews.com/sitemap.xml
+
+# Disallow specific admin paths if you have them
+# Disallow: /admin/
+# Disallow: /private/
