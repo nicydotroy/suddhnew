@@ -1,5 +1,5 @@
 import Script from 'next/script';
-import { generateArticleSchema } from '@/lib/seo';
+import { generateArticleSchema, generateOrganizationSchema } from '@/lib/seo';
 
 interface ArticleMetadataProps {
   title: string;
@@ -20,7 +20,7 @@ export default function ArticleMetadata({
   date,
   url,
 }: ArticleMetadataProps) {
-  const schema = generateArticleSchema({
+  const articleSchema = generateArticleSchema({
     title,
     description,
     content,
@@ -30,11 +30,18 @@ export default function ArticleMetadata({
     url,
   });
 
+  const organizationSchema = generateOrganizationSchema();
+
+  const schemaGraph = {
+    '@context': 'https://schema.org',
+    '@graph': [articleSchema, organizationSchema],
+  };
+
   return (
     <Script
       id="article-schema"
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaGraph) }}
     />
   );
 }

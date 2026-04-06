@@ -130,39 +130,36 @@ export default async function ArticlePage({ params }: Props) {
             </div>
 
             {/* Article Content */}
-            <div className="article-content mb-12 space-y-6">
-              {article.content.split('\n').map((line, index) => {
-                const trimmedLine = line.trim();
-                
-                if (!trimmedLine) return null;
-                
-                if (trimmedLine.startsWith('##')) {
-                  const title = trimmedLine.replace(/^##\s*/, '');
+            <div className="article-content mb-12 space-y-6 prose prose-lg max-w-none">
+              {article.content.split('\n\n').map((section, sectionIndex) => {
+                return section.split('\n').map((line, lineIndex) => {
+                  const trimmedLine = line.trim();
+                  
+                  if (!trimmedLine) return null;
+                  
+                  // Handle horizontal rules
+                  if (trimmedLine === '---') {
+                    return <hr key={`${sectionIndex}-${lineIndex}`} className="my-8 border-orange-200" />;
+                  }
+                  
+                  // Check if line is a potential heading (all caps or special markers)
+                  const isHeading = trimmedLine.length < 80 && (trimmedLine === trimmedLine.toUpperCase() || trimmedLine.includes('RANK:') || trimmedLine.includes(':'));
+                  
+                  if (isHeading && trimmedLine.includes(':') && !trimmedLine.includes('-')) {
+                    return (
+                      <h3 key={`${sectionIndex}-${lineIndex}`} className="text-xl md:text-2xl font-bold mt-8 mb-4 text-orange-700">
+                        {trimmedLine}
+                      </h3>
+                    );
+                  }
+                  
+                  // Default paragraph rendering
                   return (
-                    <h2 key={index} className="text-2xl md:text-3xl font-bold mt-10 mb-6 text-gray-900">
-                      {title}
-                    </h2>
+                    <p key={`${sectionIndex}-${lineIndex}`} className="text-base md:text-lg leading-8 text-gray-700">
+                      {trimmedLine}
+                    </p>
                   );
-                }
-                
-                if (trimmedLine.startsWith('#')) {
-                  const title = trimmedLine.replace(/^#\s*/, '');
-                  return (
-                    <h1 key={index} className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent">
-                      {title}
-                    </h1>
-                  );
-                }
-                
-                if (trimmedLine.startsWith('---')) {
-                  return <hr key={index} className="my-8" />;
-                }
-                
-                return (
-                  <p key={index} className="text-lg leading-8 text-gray-700">
-                    {trimmedLine}
-                  </p>
-                );
+                });
               })}
             </div>
 

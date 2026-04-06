@@ -67,16 +67,35 @@ export function generateArticleSchema(article: {
   return {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
+    '@id': article.url,
     headline: article.title,
     description: article.description,
-    image: article.image,
+    image: {
+      '@type': 'ImageObject',
+      url: article.image,
+      width: 1200,
+      height: 600,
+    },
     datePublished: article.date,
+    dateModified: article.date,
     author: {
       '@type': 'Person',
       name: article.author,
     },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Suddh News',
+      logo: {
+        '@type': 'ImageObject',
+        url: siteConfig.ogImage,
+      },
+    },
     articleBody: article.content,
     url: article.url,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': article.url,
+    },
   };
 }
 
