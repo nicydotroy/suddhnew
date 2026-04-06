@@ -22,18 +22,18 @@ export default function Home() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-orange-50 via-white to-blue-50 py-16 md:py-24">
+        <section className="relative overflow-hidden bg-gradient-to-br from-orange-50 via-white to-orange-100 py-16 md:py-24">
           {/* Background Animation */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute -top-40 -right-40 w-80 h-80 bg-orange-200 rounded-full opacity-20 blur-3xl" />
-            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-200 rounded-full opacity-20 blur-3xl" />
+            <div className="absolute -top-40 -right-40 w-80 h-80 bg-orange-300 rounded-full opacity-20 blur-3xl" />
+            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-orange-200 rounded-full opacity-20 blur-3xl" />
           </div>
 
           <div className="container relative mx-auto px-4 text-center sm:px-6 lg:px-8">
             <div className="mx-auto max-w-3xl">
               <h1 className="text-5xl md:text-6xl font-black text-gray-900 mb-6">
                 Welcome to{' '}
-                <span className="bg-gradient-to-r from-orange-600 to-blue-600 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent">
                   Suddh News
                 </span>
               </h1>
@@ -43,7 +43,7 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
                   href="#articles"
-                  className="px-8 py-3 bg-gradient-to-r from-orange-500 to-blue-600 text-white font-bold rounded-lg hover:shadow-lg transition-all"
+                  className="px-8 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold rounded-lg hover:shadow-lg transition-all"
                 >
                   Start Reading
                 </a>
@@ -84,13 +84,13 @@ export default function Home() {
 
         {/* Articles Section */}
         {hasArticles ? (
-          <section id="articles" className="py-16 md:py-20 bg-gradient-to-br from-white via-orange-50 to-blue-50">
+          <section id="articles" className="py-16 md:py-20 bg-gradient-to-br from-white via-orange-50 to-orange-100">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
               <div className="mb-12">
                 <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
                   Latest Articles
                 </h2>
-                <div className="h-1 w-20 bg-gradient-to-r from-orange-500 to-blue-600 rounded" />
+                <div className="h-1 w-20 bg-gradient-to-r from-orange-500 to-orange-600 rounded" />
               </div>
 
               {/* Articles Grid */}

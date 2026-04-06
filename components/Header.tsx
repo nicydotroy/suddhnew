@@ -41,7 +41,7 @@ export default function Header() {
             </a>
             <Link 
               href="/login"
-              className="px-4 py-2 bg-gradient-to-r from-orange-500 to-blue-600 text-white rounded-lg hover:shadow-lg transition-all font-medium"
+              className="px-4 py-2 bg-gradient-to-r from-orange-400 to-orange-600 text-white rounded-lg hover:shadow-lg transition-all font-medium"
             >
               Admin
             </Link>
@@ -75,7 +75,7 @@ export default function Header() {
             </a>
             <Link 
               href="/login"
-              className="block px-4 py-2 bg-gradient-to-r from-orange-500 to-blue-600 text-white text-center rounded-lg font-medium"
+              className="block px-4 py-2 bg-gradient-to-r from-orange-400 to-orange-600 text-white text-center rounded-lg font-medium"
             >
               Admin
             </Link>

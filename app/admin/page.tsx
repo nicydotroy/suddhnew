@@ -104,7 +104,7 @@ export default function AdminPage() {
         <section className="py-12 md:py-16">
           <div className="container mx-auto px-4 max-w-4xl sm:px-6 lg:px-8">
             <div className="mb-8 flex items-center justify-between">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-blue-600 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent">
                 Publish New Article
               </h1>
               <button
@@ -284,7 +284,7 @@ export default function AdminPage() {
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="flex-1 rounded-lg bg-gradient-to-r from-orange-500 to-blue-600 px-6 py-3 font-semibold text-white hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 rounded-lg bg-gradient-to-r from-orange-400 to-orange-600 px-6 py-3 font-semibold text-white hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {submitting ? 'Publishing...' : '✓ Publish Article'}
                   </button>
