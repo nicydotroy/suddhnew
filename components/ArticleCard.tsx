@@ -26,7 +26,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
       <div className="flex flex-1 flex-col justify-between p-6">
         {/* Category Badge */}
         <div className="mb-3 flex items-center justify-between">
-          <span className="inline-block rounded-full bg-gradient-to-r from-orange-100 to-red-100 px-3 py-1 text-xs font-bold text-orange-700">
+          <span className="inline-block rounded-full bg-gradient-to-r from-orange-100 to-blue-100 px-3 py-1 text-xs font-bold text-orange-700">
             {article.category}
           </span>
           <time className="text-xs text-gray-500 font-medium">
@@ -54,7 +54,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
 
         {/* Author */}
         <div className="mb-4 flex items-center gap-2">
-          <div className="h-6 w-6 rounded-full bg-gradient-to-br from-orange-400 to-red-500" />
+          <div className="h-6 w-6 rounded-full bg-gradient-to-br from-orange-400 to-blue-500" />
           <span className="text-xs font-semibold text-gray-700">{article.author}</span>
         </div>
 

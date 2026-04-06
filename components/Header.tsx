@@ -12,20 +12,17 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-white backdrop-blur-md border-b border-gray-100 shadow-sm">
       <nav className="container mx-auto px-4 py-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
+          {/* Logo Only */}
+          <Link href="/" className="flex items-center group">
             <div className="relative">
               <Image
                 src="/image/logo.png"
                 alt={siteConfig.name}
-                width={45}
-                height={45}
-                className="h-11 w-auto group-hover:scale-110 transition-transform"
+                width={50}
+                height={50}
+                className="h-12 w-auto group-hover:scale-110 transition-transform"
               />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-orange-500 to-red-600 bg-clip-text text-transparent hidden sm:inline">
-              {siteConfig.name}
-            </span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -43,10 +40,10 @@ export default function Header() {
               Contact
             </a>
             <Link 
-              href="/admin"
-              className="px-4 py-2 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-lg hover:shadow-lg transition-all font-medium"
+              href="/login"
+              className="px-4 py-2 bg-gradient-to-r from-orange-500 to-blue-600 text-white rounded-lg hover:shadow-lg transition-all font-medium"
             >
-              New Article
+              Admin
             </Link>
           </div>
 
@@ -77,10 +74,10 @@ export default function Header() {
               Contact
             </a>
             <Link 
-              href="/admin"
-              className="block px-4 py-2 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-lg text-center font-medium"
+              href="/login"
+              className="block px-4 py-2 bg-gradient-to-r from-orange-500 to-blue-600 text-white text-center rounded-lg font-medium"
             >
-              New Article
+              Admin
             </Link>
           </div>
         )}
