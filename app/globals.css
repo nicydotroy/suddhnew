@@ -7,6 +7,7 @@
   --primary-blue: #0066CC;
   --accent-yellow: #FFD700;
   --secondary-orange: #FF6B35;
+  --font-lora: var(--font-lora);
 }
 
 @theme inline {
@@ -14,6 +15,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-lora);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -26,7 +28,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-lora), Georgia, serif;
 }
 
 /* Suddh News Theme Colors */
@@ -66,4 +68,83 @@ button {
 button:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(255, 136, 0, 0.2);
+}
+
+/* Article Content Styling */
+article {
+  font-family: var(--font-lora), Georgia, serif;
+}
+
+article h1 {
+  font-family: var(--font-lora), Georgia, serif;
+  @apply text-4xl md:text-5xl font-bold mb-6 text-gray-900;
+}
+
+article h2 {
+  font-family: var(--font-lora), Georgia, serif;
+  @apply text-2xl md:text-3xl font-bold mt-8 mb-4 text-gray-800 border-l-4 border-orange-500 pl-4;
+}
+
+article h3 {
+  font-family: var(--font-lora), Georgia, serif;
+  @apply text-xl md:text-2xl font-semibold mt-6 mb-3 text-gray-800;
+}
+
+article h4 {
+  font-family: var(--font-lora), Georgia, serif;
+  @apply text-lg font-semibold mt-4 mb-2 text-gray-700;
+}
+
+article p {
+  font-family: var(--font-lora), Georgia, serif;
+  @apply text-lg leading-relaxed mb-4 text-gray-700 line-height-7;
+}
+
+article ul,
+article ol {
+  @apply mb-6 ml-6;
+}
+
+article li {
+  font-family: var(--font-lora), Georgia, serif;
+  @apply mb-2 text-lg text-gray-700 leading-relaxed;
+}
+
+article strong {
+  @apply font-bold text-gray-900;
+}
+
+article em {
+  @apply italic text-gray-800;
+}
+
+article blockquote {
+  font-family: var(--font-lora), Georgia, serif;
+  @apply border-l-4 border-orange-500 pl-4 py-2 mb-6 italic text-gray-700 bg-orange-50 py-4 px-4 rounded;
+}
+
+article code {
+  @apply bg-gray-100 px-2 py-1 rounded text-sm font-mono text-orange-600;
+}
+
+article pre {
+  @apply bg-gray-900 text-white p-4 rounded-lg overflow-x-auto mb-6;
+}
+
+/* Table Styling */
+article table {
+  @apply w-full border-collapse mb-6;
+}
+
+article th {
+  @apply bg-orange-100 border border-gray-300 px-4 py-2 text-left font-semibold text-gray-800;
+}
+
+article td {
+  @apply border border-gray-300 px-4 py-2 text-gray-700;
+}
+
+/* Horizontal Rule */
+article hr {
+  @apply border-t-2 border-orange-300 my-8;
 }
