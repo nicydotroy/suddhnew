@@ -1,3 +1,5 @@
+import generatedArticlesData from '@/data/generated-articles.json';
+
 // Author data
 export interface Author {
   id: string;
@@ -43,6 +45,7 @@ export interface Article {
   authorId: string;
   author: string;
   date: string;
+  publishDate: string;  // ISO date — article is live on/after this date
   image: string;
   category: string;
   tags: string[];
@@ -417,6 +420,7 @@ Let's go.`,
     authorId: 'aditya-pandey',
     author: 'Aditya Pandey',
     date: '2026-04-06',
+    publishDate: '2026-04-06',
     image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&h=600&fit=crop&q=80',
     category: 'Digital Marketing',
     tags: ['Digital Marketing', 'Mumbai', 'SEO', 'PPC', 'Social Media', 'Agency'],
@@ -573,6 +577,7 @@ That's the real opportunity.`,
     authorId: 'aditya-pandey',
     author: 'Aditya Pandey',
     date: '2026-04-04',
+    publishDate: '2026-04-04',
     image: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=1200&h=600&fit=crop&q=80',
     category: 'Technology',
     tags: ['AI', 'Digital Marketing', 'Tools', 'Automation', 'Content Creation'],
@@ -744,6 +749,7 @@ The ones who do will tell you it changed everything.`,
     authorId: 'aditya-pandey',
     author: 'Aditya Pandey',
     date: '2026-04-02',
+    publishDate: '2026-04-02',
     image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1200&h=600&fit=crop&q=80',
     category: 'Personal Branding',
     tags: ['Personal Branding', 'LinkedIn', 'Content Strategy', 'Social Media', 'Career'],
@@ -904,6 +910,7 @@ Build for your reader. Understand the algorithm. Don't confuse the two.`,
     authorId: 'aditya-pandey',
     author: 'Aditya Pandey',
     date: '2026-03-30',
+    publishDate: '2026-03-30',
     image: 'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=1200&h=600&fit=crop&q=80',
     category: 'SEO',
     tags: ['SEO', 'Google', 'Rankings', 'Content Strategy', 'Digital Marketing'],
@@ -911,43 +918,64 @@ Build for your reader. Understand the algorithm. Don't confuse the two.`,
   },
 ];
 
-// Get all articles sorted by date
+// Merge hand-written articles with AI-generated ones, filter by publishDate
+function getPublishedArticles(): Article[] {
+  const today = new Date();
+  today.setHours(23, 59, 59, 999); // include all of today
+
+  const generated = generatedArticlesData as Article[];
+  const all = [...articles, ...generated];
+
+  return all
+    .filter((a) => new Date(a.publishDate) <= today)
+    .sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime());
+}
+
+// Get all published articles sorted by publishDate desc
 export function getAllArticles(): Article[] {
-  return articles.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  return getPublishedArticles();
 }
 
-// Get article by slug
+// Get article by slug (includes unpublished — needed for static params)
 export function getArticleBySlug(slug: string): Article | undefined {
-  return articles.find((article) => article.slug === slug);
+  const generated = generatedArticlesData as Article[];
+  return [...articles, ...generated].find((article) => article.slug === slug);
 }
 
-// Get articles by category
+// Get articles by category (published only)
 export function getArticlesByCategory(category: string): Article[] {
-  return articles.filter((article) => article.category === category);
+  return getPublishedArticles().filter((article) => article.category === category);
 }
 
-// Get all categories
+// Get all categories from published articles
 export function getAllCategories(): string[] {
-  const categories = new Set(articles.map((article) => article.category));
+  const categories = new Set(getPublishedArticles().map((article) => article.category));
   return Array.from(categories);
 }
 
-// Get featured article
+// Get featured article (published only)
 export function getFeaturedArticle(): Article | undefined {
-  return articles.find((a) => a.featured) || articles[0];
+  const published = getPublishedArticles();
+  return published.find((a) => a.featured) || published[0];
 }
 
-// Get related articles
+// Get related articles (published only)
 export function getRelatedArticles(slug: string, limit: number = 3): Article[] {
   const article = getArticleBySlug(slug);
   if (!article) return [];
 
-  return articles
+  return getPublishedArticles()
     .filter((a) => a.slug !== slug && a.category === article.category)
     .slice(0, limit);
 }
 
-// Get articles by author
+// Get articles by author (published only)
 export function getArticlesByAuthor(authorId: string): Article[] {
-  return articles.filter((a) => a.authorId === authorId);
+  return getPublishedArticles().filter((a) => a.authorId === authorId);
+}
+
+// Get all slugs including future scheduled (for generateStaticParams)
+export function getAllSlugs(): string[] {
+  const generated = generatedArticlesData as Article[];
+  return [...articles, ...generated].map((a) => a.slug);
 }

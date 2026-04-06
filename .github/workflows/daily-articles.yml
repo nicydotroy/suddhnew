@@ -1,0 +1,69 @@
+name: Daily Article Generation
+
+on:
+  schedule:
+    # 2:00 AM UTC = 7:30 AM IST — runs every day
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    # Allow manual trigger from GitHub Actions UI
+    inputs:
+      date:
+        description: 'Target date (YYYY-MM-DD). Leave blank for today.'
+        required: false
+        default: ''
+      dry_run:
+        description: 'Dry run — generate but do not commit'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  generate-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    permissions:
+      contents: write   # needed to commit and push
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Determine target date
+        id: date
+        run: |
+          if [ -n "${{ github.event.inputs.date }}" ]; then
+            echo "TARGET_DATE=${{ github.event.inputs.date }}" >> $GITHUB_ENV
+          else
+            echo "TARGET_DATE=$(date -u '+%Y-%m-%d')" >> $GITHUB_ENV
+          fi
+
+      - name: Generate articles
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            node scripts/generate-articles.mjs --date=$TARGET_DATE --dry-run
+          else
+            node scripts/generate-articles.mjs --date=$TARGET_DATE
+          fi
+
+      - name: Commit and push new articles
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: |
+          git config user.name "Suddh News Bot"
+          git config user.email "bot@suddhnews.com"
+          git add data/generated-articles.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit (articles may already exist for $TARGET_DATE)"
+          else
+            git commit -m "content: Auto-publish 9 articles for $TARGET_DATE"
+            git push
+          fi

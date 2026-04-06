@@ -6,10 +6,15 @@ import { siteConfig } from '@/lib/seo';
 import { useState } from 'react';
 
 const navCategories = [
-  { label: 'Digital Marketing', href: '/#digital-marketing' },
   { label: 'Technology', href: '/#technology' },
-  { label: 'SEO', href: '/#seo' },
-  { label: 'Personal Branding', href: '/#personal-branding' },
+  { label: 'Business', href: '/#business' },
+  { label: 'Healthcare', href: '/#healthcare' },
+  { label: 'Hospitality', href: '/#hospitality' },
+  { label: 'Politics', href: '/#politics' },
+  { label: 'Travel', href: '/#travel' },
+  { label: 'Entertainment', href: '/#entertainment' },
+  { label: 'Sports', href: '/#sports' },
+  { label: 'Review', href: '/#review' },
 ];
 
 export default function Header() {

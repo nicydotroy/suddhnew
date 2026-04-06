@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ArticleMetadata from '@/components/ArticleMetadata';
 import ArticleCard from '@/components/ArticleCard';
-import { getArticleBySlug, getRelatedArticles, getAllArticles, getAuthorById } from '@/lib/articles';
+import { getArticleBySlug, getRelatedArticles, getAllSlugs, getAuthorById } from '@/lib/articles';
 import { generateMetadata as generateSEOMetadata, siteConfig } from '@/lib/seo';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -14,10 +14,7 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  const articles = getAllArticles();
-  return articles.map((article) => ({
-    slug: article.slug,
-  }));
+  return getAllSlugs().map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
