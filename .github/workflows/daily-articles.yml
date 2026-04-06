@@ -14,7 +14,7 @@ on:
       dry_run:
         description: 'Dry run — generate but do not commit'
         required: false
-        default: 'false'
+        default: false
         type: boolean
 
 jobs:
@@ -55,15 +55,15 @@ jobs:
             node scripts/generate-articles.mjs --date=$TARGET_DATE
           fi
 
-      - name: Commit and push new articles
+      - name: Commit and push articles + sitemap
         if: ${{ github.event.inputs.dry_run != 'true' }}
         run: |
           git config user.name "Suddh News Bot"
           git config user.email "bot@suddhnews.com"
-          git add data/generated-articles.json
+          git add data/generated-articles.json public/sitemap.xml
           if git diff --staged --quiet; then
             echo "No changes to commit (articles may already exist for $TARGET_DATE)"
           else
-            git commit -m "content: Auto-publish 9 articles for $TARGET_DATE"
+            git commit -m "content: Publish 9 articles + update sitemap for $TARGET_DATE"
             git push
           fi

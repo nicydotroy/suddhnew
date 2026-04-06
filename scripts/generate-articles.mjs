@@ -13,6 +13,7 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { execSync } from 'child_process';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
@@ -268,6 +269,18 @@ async function main() {
 
   console.log(`💾 Saved ${newArticles.length} articles to data/generated-articles.json`);
   console.log(`📊 Total articles in bank: ${updated.length}\n`);
+
+  // ── Generate updated sitemap ──────────────────────────────────────────────
+  console.log('🗺️  Regenerating sitemap...');
+  try {
+    execSync('node scripts/generate-sitemap.mjs', {
+      cwd: ROOT,
+      stdio: 'inherit',
+      env: { ...process.env },
+    });
+  } catch (err) {
+    console.error('⚠️  Sitemap generation failed (non-fatal):', err.message);
+  }
 }
 
 main();
