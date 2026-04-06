@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { siteConfig } from '@/lib/seo';
 
 export default function Footer() {
@@ -10,9 +11,18 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           {/* Brand */}
           <div>
-            <h3 className="text-lg font-bold text-blue-600 mb-2">
-              {siteConfig.name}
-            </h3>
+            <div className="flex items-center gap-2 mb-3">
+              <Image
+                src="/image/logo.png"
+                alt={siteConfig.name}
+                width={40}
+                height={40}
+                className="h-10 w-auto"
+              />
+              <h3 className="text-lg font-bold text-blue-600">
+                {siteConfig.name}
+              </h3>
+            </div>
             <p className="text-gray-600 text-sm">{siteConfig.description}</p>
           </div>
 
