@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 /**
  * Daily article generator for Suddh News
+ * Generates 4 articles per day, rotating through all 9 categories
+ * so every category gets covered across a 3-day cycle.
  *
  * Usage:
  *   node scripts/generate-articles.mjs                  # generates for today
- *   node scripts/generate-articles.mjs --date 2026-04-10
+ *   node scripts/generate-articles.mjs --date=2026-04-10
  *   node scripts/generate-articles.mjs --dry-run        # print without saving
  *
  * Requires: ANTHROPIC_API_KEY environment variable
@@ -16,12 +18,13 @@ import { fileURLToPath } from 'url';
 import { execSync } from 'child_process';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, '..');
+const ROOT      = join(__dirname, '..');
 const DATA_FILE = join(ROOT, 'data', 'generated-articles.json');
 
-// ── Config ────────────────────────────────────────────────────────────────────
+const ARTICLES_PER_DAY = 4;
 
-const CATEGORIES = [
+// All 9 categories — rotated so every category appears every ~2-3 days
+const ALL_CATEGORIES = [
   'Technology',
   'Business',
   'Healthcare',
@@ -99,6 +102,21 @@ const CATEGORY_IMAGES = {
   ],
 };
 
+// ── Category rotation ─────────────────────────────────────────────────────────
+// Given a date, pick 4 categories by rotating through all 9.
+// day 1: index 0,1,2,3 | day 2: 4,5,6,7 | day 3: 8,0,1,2 | day 4: 3,4,5,6 …
+function getCategoriesForDate(dateStr) {
+  const epoch = new Date('2026-04-08'); // starting epoch
+  const target = new Date(dateStr);
+  const dayOffset = Math.round((target - epoch) / 86400000);
+  const start = (dayOffset * ARTICLES_PER_DAY) % ALL_CATEGORIES.length;
+  const cats = [];
+  for (let i = 0; i < ARTICLES_PER_DAY; i++) {
+    cats.push(ALL_CATEGORIES[(start + i) % ALL_CATEGORIES.length]);
+  }
+  return cats;
+}
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function pickImage(category, seed) {
@@ -122,8 +140,7 @@ function slugify(text) {
 
 function parseArgs() {
   const args = process.argv.slice(2);
-  const dateArg = args.find((a) => a.startsWith('--date='))?.split('=')[1]
-    || args[args.indexOf('--date') + 1];
+  const dateArg = args.find((a) => a.startsWith('--date='))?.split('=')[1];
   const dryRun = args.includes('--dry-run');
   const targetDate = dateArg || new Date().toISOString().slice(0, 10);
   return { targetDate, dryRun };
@@ -131,26 +148,26 @@ function parseArgs() {
 
 // ── Claude API call ───────────────────────────────────────────────────────────
 
-async function generateArticlesForDate(targetDate) {
+async function generateArticlesForDate(targetDate, categories) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     throw new Error('ANTHROPIC_API_KEY environment variable is not set.');
   }
 
-  const prompt = `Generate ${CATEGORIES.length} original news articles for Suddh News, an Indian digital news publication. Today's date is ${targetDate}.
+  const prompt = `Generate ${categories.length} original news articles for Suddh News, an Indian digital news publication. Today's date is ${targetDate}.
 
-Write one article for each of these categories: ${CATEGORIES.join(', ')}.
+Write one article for each of these categories (in this exact order): ${categories.join(', ')}.
 
-Focus on current, relevant topics. For Indian audiences where appropriate (especially Business, Politics, Healthcare). Write in a professional news style — factual, engaging, no fluff.
+Focus on current, relevant, timely topics. Prioritize Indian context where appropriate (Business, Politics, Healthcare, Sports). Write in a professional news style — factual, engaging, human.
 
-Return ONLY a valid JSON array. No markdown, no explanation, just the JSON array. Each object must have exactly these fields:
-- "category": (string) one of the categories listed
-- "title": (string) compelling, specific headline — 60-80 characters
-- "description": (string) 120-150 character meta description
-- "content": (string) full article body, 700-900 words. Plain text only — no markdown, no #, no **, no bullet dashes. Use paragraph breaks (double newline) between sections. Section headings are short standalone lines.
+Return ONLY a valid JSON array. No markdown, no explanation. Each object must have exactly these fields:
+- "category": (string) matching one of the categories listed above
+- "title": (string) compelling, specific headline — 65-85 characters
+- "description": (string) 130-155 character meta description
+- "content": (string) full article body, 750-950 words. Plain text only — no markdown, no #, no **, no dashes for bullets. Use double newlines between paragraphs. Short standalone lines serve as section headings.
 - "tags": (array of strings) 5-6 relevant tags
 
-The JSON array must contain exactly ${CATEGORIES.length} objects, one per category, in this order: ${CATEGORIES.join(', ')}.`;
+Return exactly ${categories.length} objects in this order: ${categories.join(', ')}.`;
 
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -161,7 +178,7 @@ The JSON array must contain exactly ${CATEGORIES.length} objects, one per catego
     },
     body: JSON.stringify({
       model: 'claude-opus-4-6',
-      max_tokens: 16000,
+      max_tokens: 8192,
       messages: [{ role: 'user', content: prompt }],
     }),
   });
@@ -173,21 +190,16 @@ The JSON array must contain exactly ${CATEGORIES.length} objects, one per catego
 
   const data = await response.json();
   const text = data.content[0].text.trim();
-
-  // Strip any accidental markdown code fences
   const cleaned = text.replace(/^```json?\n?/, '').replace(/\n?```$/, '');
 
   let parsed;
   try {
     parsed = JSON.parse(cleaned);
   } catch {
-    throw new Error(`Failed to parse JSON response:\n${cleaned.slice(0, 500)}`);
+    throw new Error(`Failed to parse JSON:\n${cleaned.slice(0, 500)}`);
   }
 
-  if (!Array.isArray(parsed)) {
-    throw new Error('Response is not a JSON array');
-  }
-
+  if (!Array.isArray(parsed)) throw new Error('Response is not a JSON array');
   return parsed;
 }
 
@@ -195,47 +207,41 @@ The JSON array must contain exactly ${CATEGORIES.length} objects, one per catego
 
 async function main() {
   const { targetDate, dryRun } = parseArgs();
+  const categories = getCategoriesForDate(targetDate);
 
   console.log(`\n📰 Suddh News — Article Generator`);
-  console.log(`📅 Date: ${targetDate}`);
-  console.log(`🔄 Generating ${CATEGORIES.length} articles (one per category)...\n`);
+  console.log(`📅 Date    : ${targetDate}`);
+  console.log(`📂 Today's categories: ${categories.join(', ')}\n`);
 
   // Load existing articles
   let existing = [];
-  try {
-    existing = JSON.parse(readFileSync(DATA_FILE, 'utf8'));
-  } catch {
-    existing = [];
-  }
+  try { existing = JSON.parse(readFileSync(DATA_FILE, 'utf8')); } catch { existing = []; }
 
-  // Check if articles for this date already exist
-  const alreadyGenerated = existing.filter((a) => a.publishDate === targetDate);
-  if (alreadyGenerated.length > 0) {
-    console.log(`⚠️  Found ${alreadyGenerated.length} articles already generated for ${targetDate}.`);
-    console.log('   Skipping generation. Use --date with a different date or remove existing entries.\n');
+  // Skip if already done for this date
+  const alreadyDone = existing.filter((a) => a.publishDate === targetDate);
+  if (alreadyDone.length > 0) {
+    console.log(`⚠️  ${alreadyDone.length} articles already exist for ${targetDate}. Skipping.\n`);
     process.exit(0);
   }
 
-  // Call Claude API
+  // Call Claude
   let rawArticles;
   try {
-    rawArticles = await generateArticlesForDate(targetDate);
+    rawArticles = await generateArticlesForDate(targetDate, categories);
   } catch (err) {
     console.error('❌ Generation failed:', err.message);
     process.exit(1);
   }
 
-  console.log(`✅ Received ${rawArticles.length} articles from Claude API\n`);
+  console.log(`✅ Received ${rawArticles.length} articles from Claude\n`);
 
-  // Build full article objects
+  // Build article objects
   const timestamp = Date.now();
   const newArticles = rawArticles.map((raw, i) => {
+    const category = raw.category || categories[i] || 'Technology';
     const slug = slugify(raw.title) + '-' + targetDate.replace(/-/g, '');
-    const category = raw.category || CATEGORIES[i] || 'Technology';
-    const id = `gen-${targetDate.replace(/-/g, '')}-${i + 1}`;
-
     return {
-      id,
+      id: `gen-${targetDate.replace(/-/g, '')}-${i + 1}`,
       title: raw.title,
       slug,
       description: raw.description,
@@ -251,10 +257,7 @@ async function main() {
     };
   });
 
-  // Print summary
-  newArticles.forEach((a, i) => {
-    console.log(`  ${i + 1}. [${a.category}] ${a.title}`);
-  });
+  newArticles.forEach((a, i) => console.log(`  ${i + 1}. [${a.category}] ${a.title}`));
   console.log('');
 
   if (dryRun) {
@@ -263,23 +266,16 @@ async function main() {
     return;
   }
 
-  // Append and save
   const updated = [...existing, ...newArticles];
   writeFileSync(DATA_FILE, JSON.stringify(updated, null, 2) + '\n', 'utf8');
+  console.log(`💾 Saved to data/generated-articles.json (total: ${updated.length} articles)\n`);
 
-  console.log(`💾 Saved ${newArticles.length} articles to data/generated-articles.json`);
-  console.log(`📊 Total articles in bank: ${updated.length}\n`);
-
-  // ── Generate updated sitemap ──────────────────────────────────────────────
-  console.log('🗺️  Regenerating sitemap...');
+  // Regenerate sitemap
+  console.log('🗺️  Updating sitemap...');
   try {
-    execSync('node scripts/generate-sitemap.mjs', {
-      cwd: ROOT,
-      stdio: 'inherit',
-      env: { ...process.env },
-    });
+    execSync('node scripts/generate-sitemap.mjs', { cwd: ROOT, stdio: 'inherit', env: { ...process.env } });
   } catch (err) {
-    console.error('⚠️  Sitemap generation failed (non-fatal):', err.message);
+    console.error('⚠️  Sitemap error (non-fatal):', err.message);
   }
 }
 
