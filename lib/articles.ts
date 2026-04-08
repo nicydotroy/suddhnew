@@ -23,7 +23,7 @@ export const authors: Author[] = [
     role: 'Senior Writer & Digital Strategist',
     twitter: 'adityapandey',
     linkedin: 'aditya-pandey',
-    email: 'aditya@suddhnews.com',
+    email: 'aditya@suddhnews.in',
   },
 ];
 

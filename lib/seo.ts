@@ -2,7 +2,7 @@
 export const siteConfig = {
   name: 'Suddh News',
   description: 'A blog platform for sharing insightful articles on technology, marketing, and web development.',
-  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://suddhnnews.com',
+  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://suddhnews.in',
   ogImage: 'https://via.placeholder.com/1200x630?text=Suddh+News',
   twitterHandle: '@suddhnnews',
 };

@@ -27,7 +27,7 @@ const GEN_FILE    = join(ROOT, 'data', 'generated-articles.json');
 const PUBLIC_DIR  = join(ROOT, 'public');
 const OUT_FILE    = join(PUBLIC_DIR, 'sitemap.xml');
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://suddhnnews.com';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://suddhnews.in';
 
 // ── Static pages beyond articles ─────────────────────────────────────────────
 

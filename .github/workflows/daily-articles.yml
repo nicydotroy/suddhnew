@@ -59,7 +59,7 @@ jobs:
         if: ${{ github.event.inputs.dry_run != 'true' }}
         run: |
           git config user.name "Suddh News Bot"
-          git config user.email "bot@suddhnews.com"
+          git config user.email "bot@suddhnews.in"
           git add data/generated-articles.json public/sitemap.xml
           if git diff --staged --quiet; then
             echo "No changes to commit (articles may already exist for $TARGET_DATE)"
